@@ -18,8 +18,4 @@ impl Config {
     pub fn get(&self, key: &str) -> Option<&String> {
         self.store.get(key)
     }
-
-    pub fn insert(&mut self, key: String, value: String) {
-        self.store.insert(key, value);
-    }
 }
