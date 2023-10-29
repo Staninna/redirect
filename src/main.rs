@@ -4,8 +4,13 @@ use rocket::{launch, routes, Config as RocketConfig};
 use routes::{create_redirect, redirect};
 
 // TODO: Add custom 404 handler
-// TODO: Add custom 500 handler
+// TODO: Add redirect update
+// TODO: Add redirect deletion
+// TODO: Add redirect listing (with pagination, sorting, and filtering options)
+// TODO: Add users and authentication
+// TODO: Add user management
 // TODO: Add redirect stats
+// TODO: Add redirect stats listing
 
 mod config;
 mod database;
