@@ -1,6 +1,6 @@
 use config::Config;
 use database::Db;
-use rocket::{get, launch, post, routes};
+use rocket::{get, launch, post, routes, Config as RocketConfig};
 
 // TODO: Add custom 404 handler
 // TODO: Add custom 500 handler
@@ -12,8 +12,12 @@ mod database;
 #[launch]
 async fn rocket() -> _ {
     let config = Config::new();
+    let rocket_config = RocketConfig::figment()
+        .merge(("port", conf_get!(config, "PORT", i64)))
+        .merge(("address", conf_get!(config, "IP", String)));
 
     rocket::build()
+        .configure(rocket_config)
         .mount("/", routes![redirect, create_redirect])
         .manage(Db::new(&config).await)
         .manage(config)

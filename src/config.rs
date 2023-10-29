@@ -1,5 +1,6 @@
 use crate::conf_set;
 use hashbrown::HashMap;
+use std::net::IpAddr;
 
 #[derive(Debug)]
 pub struct Config {
@@ -13,6 +14,8 @@ impl Config {
         dotenvy::dotenv().ok();
         conf_set!(store, "DATABASE_URL", String);
         conf_set!(store, "DATABASE_MAX_CONNECTIONS", u32);
+        conf_set!(store, "PORT", u16);
+        conf_set!(store, "IP", IpAddr);
 
         Self { store }
     }
