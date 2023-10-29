@@ -1,5 +1,5 @@
 use crate::database::Db;
-use rocket::{get, post};
+use rocket::{catch, get, post};
 
 #[get("/<code>")]
 pub async fn redirect(
@@ -25,4 +25,10 @@ pub async fn create_redirect(
         Ok(_) => Ok(format!("Created redirect /{} -> {}", code, url)),
         Err(err) => Err(err),
     }
+}
+
+// TODO: Make pretty 404 page
+#[catch(404)]
+pub fn not_found() -> String {
+    "404 Not Found".to_string()
 }

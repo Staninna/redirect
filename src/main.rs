@@ -1,9 +1,8 @@
 use config::Config;
 use database::Db;
-use rocket::{launch, routes, Config as RocketConfig};
-use routes::{create_redirect, redirect};
+use rocket::{catchers, launch, routes, Config as RocketConfig};
+use routes::{create_redirect, not_found, redirect};
 
-// TODO: Add custom 404 handler
 // TODO: Add redirect update
 // TODO: Add redirect deletion
 // TODO: Add redirect listing (with pagination, sorting, and filtering options)
@@ -26,6 +25,7 @@ async fn rocket() -> _ {
     rocket::build()
         .configure(rocket_config)
         .mount("/", routes![redirect, create_redirect])
+        .register("/", catchers![not_found])
         .manage(Db::new(&config).await)
         .manage(config)
 }
