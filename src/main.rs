@@ -1,6 +1,7 @@
 use config::Config;
 use database::Db;
-use rocket::{get, launch, post, routes, Config as RocketConfig};
+use rocket::{launch, routes, Config as RocketConfig};
+use routes::{create_redirect, redirect};
 
 // TODO: Add custom 404 handler
 // TODO: Add custom 500 handler
@@ -8,6 +9,7 @@ use rocket::{get, launch, post, routes, Config as RocketConfig};
 
 mod config;
 mod database;
+mod routes;
 
 #[launch]
 async fn rocket() -> _ {
@@ -21,32 +23,6 @@ async fn rocket() -> _ {
         .mount("/", routes![redirect, create_redirect])
         .manage(Db::new(&config).await)
         .manage(config)
-}
-
-#[get("/<code>")]
-async fn redirect(
-    code: String,
-    database: &rocket::State<Db>,
-) -> Option<rocket::response::Redirect> {
-    let url = database.get_redirect(&code).await;
-    match url {
-        Some(url) => Some(rocket::response::Redirect::to(url)),
-        None => None,
-    }
-}
-
-#[post("/?<code>&<url>")]
-async fn create_redirect(
-    code: String,
-    url: String,
-    database: &rocket::State<Db>,
-) -> Result<String, String> {
-    let result = database.create_redirect(&code, &url).await;
-
-    match result {
-        Ok(_) => Ok(format!("Created redirect /{} -> {}", code, url)),
-        Err(err) => Err(err),
-    }
 }
 
 #[macro_export]
