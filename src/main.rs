@@ -1,8 +1,10 @@
 use config::Config;
 use database::Db;
-use rocket::{get, launch, routes};
+use rocket::{get, launch, post, routes};
 
 // TODO: Add custom 404 handler
+// TODO: Add custom 500 handler
+// TODO: Add redirect stats
 
 mod config;
 mod database;
@@ -12,7 +14,7 @@ async fn rocket() -> _ {
     let config = Config::new();
 
     rocket::build()
-        .mount("/", routes![redirect])
+        .mount("/", routes![redirect, create_redirect])
         .manage(Db::new(&config).await)
         .manage(config)
 }
@@ -26,6 +28,20 @@ async fn redirect(
     match url {
         Some(url) => Some(rocket::response::Redirect::to(url)),
         None => None,
+    }
+}
+
+#[post("/?<code>&<url>")]
+async fn create_redirect(
+    code: String,
+    url: String,
+    database: &rocket::State<Db>,
+) -> Result<String, String> {
+    let result = database.create_redirect(&code, &url).await;
+
+    match result {
+        Ok(_) => Ok(format!("Created redirect /{} -> {}", code, url)),
+        Err(err) => Err(err),
     }
 }
 
