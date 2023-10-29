@@ -1,11 +1,18 @@
 use config::Config;
+use database::Database;
 use rocket::{get, launch, routes};
 
 mod config;
+mod database;
 
 #[launch]
-fn rocket() -> _ {
-    rocket::build().mount("/", routes![index])
+async fn rocket() -> _ {
+    let config = Config::new();
+
+    rocket::build()
+        .mount("/", routes![index])
+        .manage(Database::new(&config).await)
+        .manage(config)
 }
 
 #[get("/")]
