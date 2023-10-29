@@ -1,0 +1,23 @@
+[package]
+name = "redirect"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+sqlx = { version = "0.7.2", features = ["mysql", "macros", "runtime-tokio"] }
+rocket = { version = "0.5.0-rc.3", features = ["json"] }
+serde = { version = "1.0.190", features = ["derive"] }
+chrono = { version = "0.4.31", features = ["serde"] }
+uuid = { version = "1.5.0", features = ["v4"] }
+hashbrown = "0.14.2"
+dotenv = "0.15.0"
+url = "2.4.1"
+
+# Premature optimization is the root of all evil
+[profile.release]
+opt-level = 3
+lto = true
+debug = false
+codegen-units = 1
