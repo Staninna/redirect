@@ -1,6 +1,6 @@
 use super::Redirect;
 use crate::{conf_get, config::Config};
-use sqlx::{migrate, mysql::MySqlPoolOptions, MySql, Pool};
+use sqlx::{migrate, mysql::MySqlPoolOptions, query_as, MySql, Pool};
 
 pub struct Db {
     pool: Pool<MySql>,
@@ -27,7 +27,7 @@ impl Db {
     }
 
     pub async fn get_redirect(&self, code: &str) -> Option<String> {
-        let redirect = sqlx::query_as!(
+        let redirect = query_as!(
             Redirect,
             "SELECT id, code, url FROM redirects WHERE code = ?",
             code
@@ -43,7 +43,7 @@ impl Db {
     }
 
     pub async fn create_redirect(&self, code: &str, url: &str) -> Result<(), String> {
-        let result = sqlx::query_as!(
+        let result = query_as!(
             Redirect,
             "INSERT INTO redirects (code, url) VALUES (?, ?)",
             code,
