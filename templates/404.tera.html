@@ -1,9 +1,14 @@
 {# Base template is extended #}
 {% extends "base.tera.html" %}
 {# Title is defined #}
-{% block title %}404 - Page not found{% endblock %}
+{% block title %}
+{{ title }}
+{% endblock %}
 
 {# Content is defined #}
 {% block content %}
-<h1>404 - Page not found</h1>
+<div class="d-flex flex-column align-items-center mt-5">
+    <h1>{{ title }}</h1>
+    <p>{{ message }}</p>
+</div>
 {% endblock %}

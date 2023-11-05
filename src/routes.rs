@@ -40,8 +40,8 @@ pub struct NotFound(String);
 
 fn not_found(tera: &State<Tera>) -> NotFound {
     let mut context = Context::new();
-    context.insert("title", "404 Not Found");
-    context.insert("message", "The page you are looking for does not exist.");
+    context.insert("title", "404 - URL not found");
+    context.insert("message", "The URL you requested could not be found.");
     let body = tera.render("404.tera.html", &context).unwrap();
 
     NotFound(body)
