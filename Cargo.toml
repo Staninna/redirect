@@ -12,6 +12,7 @@ chrono = { version = "0.4.31", features = ["serde"] }
 hashbrown = "0.14.2"
 dotenvy = "0.15.7"
 log = "0.4.20"
+bcrypt = "0.15.0"
 
 # Premature optimization is the root of all evil
 [profile.release]
