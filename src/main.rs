@@ -1,7 +1,8 @@
 use config::Config;
 use database::Db;
-use rocket::{catchers, launch, routes, Config as RocketConfig};
-use routes::{create_redirect, not_found, redirect};
+use rocket::{launch, routes, Config as RocketConfig};
+use routes::{create_redirect, redirect};
+use tera::Tera;
 
 // TODO: Add redirect update
 // TODO: Add redirect deletion
@@ -22,11 +23,13 @@ async fn rocket() -> _ {
         .merge(("port", conf_get!(config, "PORT", i64)))
         .merge(("address", conf_get!(config, "IP", String)));
 
+    let tera = Tera::new(conf_get!(config, "TERA_TEMPLATE_PATH", String).as_str()).unwrap();
+
     rocket::build()
         .configure(rocket_config)
         .mount("/", routes![redirect, create_redirect])
-        .register("/", catchers![not_found])
         .manage(Db::new(&config).await)
+        .manage(tera)
         .manage(config)
 }
 

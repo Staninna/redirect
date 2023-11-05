@@ -1,15 +1,22 @@
 use crate::database::Db;
-use rocket::{catch, get, post};
+use rocket::{
+    get, post,
+    response::{Redirect, Responder},
+    State,
+};
+use tera::{Context, Tera};
 
 #[get("/<code>")]
 pub async fn redirect(
     code: String,
-    database: &rocket::State<Db>,
-) -> Option<rocket::response::Redirect> {
+    database: &State<Db>,
+    tera: &State<Tera>,
+) -> Result<Redirect, NotFound> {
     let url = database.get_redirect(&code).await;
+
     match url {
-        Some(url) => Some(rocket::response::Redirect::to(url)),
-        None => None,
+        Some(url) => Ok(Redirect::to(url)),
+        None => Err(not_found(tera)),
     }
 }
 
@@ -17,7 +24,7 @@ pub async fn redirect(
 pub async fn create_redirect(
     code: String,
     url: String,
-    database: &rocket::State<Db>,
+    database: &State<Db>,
 ) -> Result<String, String> {
     let result = database.create_redirect(&code, &url).await;
 
@@ -27,8 +34,15 @@ pub async fn create_redirect(
     }
 }
 
-// TODO: Make pretty 404 page
-#[catch(404)]
-pub fn not_found() -> String {
-    "404 Not Found".to_string()
+#[derive(Responder)]
+#[response(status = 404, content_type = "html")]
+pub struct NotFound(String);
+
+fn not_found(tera: &State<Tera>) -> NotFound {
+    let mut context = Context::new();
+    context.insert("title", "404 Not Found");
+    context.insert("message", "The page you are looking for does not exist.");
+    let body = tera.render("404.tera.html", &context).unwrap();
+
+    NotFound(body)
 }
