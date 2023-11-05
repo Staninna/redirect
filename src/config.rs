@@ -16,6 +16,7 @@ impl Config {
         conf_set!(store, "DATABASE_MAX_CONNECTIONS", u32);
         conf_set!(store, "PORT", u16);
         conf_set!(store, "IP", IpAddr);
+        conf_set!(store, "TERA_TEMPLATE_PATH", String);
 
         Self { store }
     }
